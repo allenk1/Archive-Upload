@@ -23,40 +23,30 @@ SFTPPASSWORD = ""
 #---------------  END GLOBAL VARIABLES ----------------#
 
 # File Archive Function
-def archive():
+def main():
+    # Open sFTP Connection
+    SFTPSRV = pysftp.Connection(host=SFTPHOST, username=SFTPUSERNAME, password=SFTPPASSWORD)
     # Build SRC file dictionary
     SRCFILES = glob.glob(SOURCE)
-    print(SRCFILES)
-    # Copy all files to new destination
+
+    # Process Docs
     for FILE in SRCFILES:
         FULLNAME = os.path.join(SOURCE, FILE)
         print(FULLNAME)
         if (os.path.isfile(FULLNAME)):
+            # Copy all files to new destination
             shutil.copy(FULLNAME, DESTINATION)
 
-            print("File Archive Completed")
-
-#  sFTP Function
-def sftp():
-
-    # Open sFTP Connection
-    SFTPSRV = pysftp.Connection(host=SFTPHOST, username=SFTPUSERNAME, password=SFTPPASSWORD)
-
-    #Build SRC file dictionary
-    SRCFILES = glob.glob(SOURCE)
-
-    # Copy all files to the sFTP server
-    for FILE in SRCFILES:
-        FULLNAME = os.path.join(SOURCE, FILE)
-        if (os.path.isfile(FULLNAME)):
+            # FTP to server
             SFTPSRV.put(FULLNAME)
 
-            # cleanup files
-            os.remove(FULLNAME)
-
-    print("File Upload Completed")
+            # Check if file uploads and then remove
+            if(SFTPSRV.exists(FILE):
+                # cleanup files
+                os.remove(FULLNAME)
+                print("File Upload Completed")
+                
     SFTPSRV.close()
 
 if __name__ == '__main__':
-    archive()
-    sftp()
+    main()
